@@ -45,7 +45,16 @@ class RouteStatistics:
 
     def __post_init__(self) -> None:
         """Post initialize."""
-        self.protocol_data_rate = ProtocolDataRate(self.data["protocolDataRate"])
+        # before (fragile)
+        # self.protocol_data_rate = ProtocolDataRate(self.data["protocolDataRate"])
+
+        # after edit (fallback)
+        rate_raw = self.data.get("protocolDataRate")
+        if rate_raw is not None:
+            self.protocol_data_rate = ProtocolDataRate(rate_raw)
+        else:
+            # default fallback for old controllers
+            self.protocol_data_rate = ProtocolDataRate.ZWAVE_9K6
 
     @cached_property
     def repeaters(self) -> list[Node]:
